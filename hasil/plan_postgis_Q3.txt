@@ -1,0 +1,4 @@
+Aggregate  (cost=2897.40..2897.41 rows=1 width=8)
+  ->  Index Scan using gempa_waktu on gempa  (cost=0.42..2886.62 rows=4310 width=0)
+        Index Cond: ((datetime >= '2020-01-01 07:00:00+07'::timestamp with time zone) AND (datetime < '2024-01-01 07:00:00+07'::timestamp with time zone))
+        Filter: ((magnitude >= '5'::double precision) AND (depth < 70))

@@ -1,0 +1,6 @@
+PostgreSQL 16.15, compiled by Visual C++ build 1944, 64-bit
+PostGIS 3.6 USE_GEOS=1 USE_PROJ=1 USE_STATS=1
+shared_buffers = 128MB
+work_mem = 4MB
+max_parallel_workers_per_gather = 2
+TimeZone = Asia/Bangkok

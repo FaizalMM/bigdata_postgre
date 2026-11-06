@@ -1,0 +1,6 @@
+Finalize Aggregate  (cost=5947.15..5947.16 rows=1 width=8)
+  ->  Gather  (cost=5946.94..5947.15 rows=2 width=8)
+        Workers Planned: 2
+        ->  Partial Aggregate  (cost=4946.94..4946.95 rows=1 width=8)
+              ->  Parallel Seq Scan on gempa  (cost=0.00..4942.67 rows=1709 width=0)
+                    Filter: ("doubleCouple" > '0.8'::double precision)

@@ -1,0 +1,16 @@
+tahap,putaran_1,putaran_2,putaran_3,median
+A. baca parquet,0.215,0.051,0.043,0.051
+B. konversi tipe waktu,0.094,0.091,0.08,0.091
+C. siapkan CSV (Python),2.192,2.426,1.968,2.192
+D. COPY ke database,2.906,3.401,3.41,3.401
+E. bangun indeks,9.888,6.892,7.753,7.753
+F. VACUUM FULL + ANALYZE,9.093,11.115,11.296,11.115
+TOTAL A-F,24.388,23.976,24.549,24.388
+Murni database D-F,21.887,21.408,22.459,21.887
+"metode_geom_(1=otomatis,0=UPDATE)",1.0,1.0,1.0,1.0
+ukuran_gempa_tabel_MB,,,,32.96
+ukuran_gempa_indeks_MB,,,,35.98
+ukuran_gempa_total_MB,,,,68.95
+ukuran_sensor_tabel_MB,,,,0.25
+ukuran_sensor_indeks_MB,,,,0.27
+ukuran_sensor_total_MB,,,,0.53

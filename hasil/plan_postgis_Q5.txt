@@ -1,0 +1,5 @@
+Aggregate  (cost=7651.07..7651.08 rows=1 width=8)
+  ->  Bitmap Heap Scan on gempa  (cost=24.15..7651.03 rows=18 width=0)
+        Filter: st_dwithin((geom)::geography, '0101000020E610000095D4096822305C4048E17A14AE071DC0'::geography, '100000'::double precision, false)
+        ->  Bitmap Index Scan on gempa_geog_gist  (cost=0.00..24.14 rows=498 width=0)
+              Index Cond: ((geom)::geography && _st_expand('0101000020E610000095D4096822305C4048E17A14AE071DC0'::geography, '100000'::double precision))

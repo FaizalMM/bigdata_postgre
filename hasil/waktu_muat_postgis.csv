@@ -1,0 +1,13 @@
+tahap,detik
+gempa: baca parquet,10.73
+gempa: konversi tipe waktu,2.558
+sensor: baca parquet,0.041
+sensor: konversi tipe waktu,0.035
+create table,2.107
+COPY (muat data),90.856
+bentuk kolom geom,28.339
+bangun indeks,31.153
+ANALYZE,8.935
+TOTAL,174.754
+ukuran_total_gempa_MB,82.94
+ukuran_total_sensor_MB,0.68

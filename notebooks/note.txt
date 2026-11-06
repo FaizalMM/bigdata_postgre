@@ -1,0 +1,75 @@
+Langkah menjalankan
+
+Simpan kedua file ke C:\Users\Lenovo\bigdata-gempa\notebooks\. Tutup aplikasi lain dan colok charger. Lalu di PowerShell:
+
+cd C:\Users\Lenovo\bigdata-gempa
+venv\Scripts\activate
+$env:PYTHONNOUSERSITE = "1"
+$env:PGPASSWORD = "PASSWORD_POSTGRES_KAMU"
+
+1. Uji coba muat, satu putaran dulu:
+
+python notebooks/02_muat_postgis_v2.py --ulang 1
+
+Yang dicari: tahap A sampai F, Verifikasi semua OK, dan SEMUA OK.
+
+2. Kalau berhasil, muat resmi 3 putaran (±10 menit):
+
+python notebooks/02_muat_postgis_v2.py
+
+3. Benchmark kueri:
+
+python notebooks/03_benchmark_postgis.py
+
+Keluarannya satu baris per kueri: median, min, maks, apakah memakai indeks, dan hasil ringkas.
+
+Yang perlu kamu perhatikan
+Kolom hasil_ringkas (misalnya “123 baris”) harus sama persis dengan hasil MongoDB dan Spark nanti. Itu cara kita memastikan ketiganya menjawab pertanyaan yang sama. Salin angkanya ke catatan.
+pakai_indeks: kueri spasial (Q5, Q6, Q7, Q8) idealnya ya. Kalau tidak, itu temuan menarik untuk analisis, dan rencana eksekusinya tersimpan di hasil\plan_postgis_Q*.txt.
+Q9 tidak punya indeks (sengaja, sama seperti spesifikasi), jadi wajar lebih lambat.
+File hasil: waktu_muat_postgis_v2.csv, benchmark_postgis.csv, dan konfigurasi_postgis.txt (bahan slide arsitektur).
+
+
+==================
+
+
+Langkah-langkah
+
+1. Cek MongoDB hidup. Sudah beberapa kali tertunda, jadi ini dulu:
+
+Get-Service *mongo*
+
+Statusnya harus Running. Lalu:
+
+mongosh --eval "db.runCommand({ping:1})"
+
+Kalau mongosh tidak dikenali, pakai:
+
+python -c "import pymongo; c=pymongo.MongoClient(serverSelectionTimeoutMS=3000); print(c.admin.command('ping'))"
+
+Harusnya muncul ok: 1. Kalau MongoDB-mu memakai password, beri tahu saya, kita atur lewat variabel MONGO_URI.
+
+2. Matikan PostgreSQL selama pengukuran MongoDB (aturan satu sistem aktif). Buka PowerShell sebagai Administrator:
+
+Get-Service *postgres*
+Stop-Service postgresql-x64-16
+
+Ganti nama layanannya kalau berbeda di daftar. Nanti dinyalakan lagi dengan Start-Service.
+
+3. Simpan skrip ke C:\Users\Lenovo\bigdata-gempa\notebooks\, tutup aplikasi lain, colok charger.
+
+4. Di PowerShell biasa:
+
+cd C:\Users\Lenovo\bigdata-gempa
+venv\Scripts\activate
+$env:PYTHONNOUSERSITE = "1"
+
+5. Uji coba satu putaran:
+
+python notebooks/04_muat_mongodb.py --ulang 1
+
+Yang dicari: tahap A sampai F, Verifikasi semuanya OK, dan SEMUA OK.
+
+6. Kalau berhasil, resmi 3 putaran:
+
+python notebooks/04_muat_mongodb.py

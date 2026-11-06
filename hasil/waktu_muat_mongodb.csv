@@ -1,0 +1,17 @@
+tahap,putaran_1,putaran_2,putaran_3,median
+A. baca parquet,0.135,0.05,0.049,0.05
+B. konversi tipe waktu,0.114,0.079,0.076,0.079
+C. susun dokumen (Python),3.476,3.039,3.048,3.048
+D. insert_many ke database,2.691,1.871,2.19,2.19
+E. bangun indeks,4.678,4.769,4.327,4.678
+F. compact,0.264,0.233,0.277,0.264
+TOTAL A-F,11.357,10.041,9.966,10.041
+Murni database D-F,7.632,6.873,6.793,6.873
+ukuran_gempa_data_MB,,,,57.46
+ukuran_gempa_storage_MB,,,,21.26
+ukuran_gempa_indeks_MB,,,,12.69
+ukuran_gempa_total_MB,,,,33.95
+ukuran_sensor_data_MB,,,,0.39
+ukuran_sensor_storage_MB,,,,0.14
+ukuran_sensor_indeks_MB,,,,0.08
+ukuran_sensor_total_MB,,,,0.22

@@ -1,0 +1,3 @@
+MongoDB 9.0.4
+storageEngine = wiredTiger
+wiredTiger cache max = 3602 MB

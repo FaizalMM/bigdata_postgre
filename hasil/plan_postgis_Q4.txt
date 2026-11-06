@@ -1,0 +1,5 @@
+GroupAggregate  (cost=25498.14..30789.66 rows=176384 width=20)
+  Group Key: ((EXTRACT(year FROM (datetime AT TIME ZONE 'UTC'::text)))::integer)
+  ->  Sort  (cost=25498.14..25939.10 rows=176384 width=12)
+        Sort Key: ((EXTRACT(year FROM (datetime AT TIME ZONE 'UTC'::text)))::integer)
+        ->  Seq Scan on gempa  (cost=0.00..7110.72 rows=176384 width=12)

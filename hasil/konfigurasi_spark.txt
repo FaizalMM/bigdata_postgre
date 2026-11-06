@@ -1,0 +1,10 @@
+Spark 4.3.0 (mode lokal, local[*])
+cores = 12
+driver memory = 2g
+shuffle partitions = 8
+timezone = UTC
+Python 3.13.0
+waktu start SparkSession = 6.41 s
+waktu registrasi Parquet = 2.286 s
+ukuran gempa.parquet = 13.1 MB
+ukuran sensor.parquet = 0.1 MB

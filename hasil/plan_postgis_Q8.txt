@@ -1,0 +1,16 @@
+Finalize GroupAggregate  (cost=17590.61..17844.25 rows=1747 width=20)
+  Group Key: g."eventID"
+  ->  Gather Merge  (cost=17590.61..17818.05 rows=1747 width=20)
+        Workers Planned: 1
+        ->  Partial GroupAggregate  (cost=16590.60..16621.50 rows=1747 width=20)
+              Group Key: g."eventID"
+              ->  Sort  (cost=16590.60..16595.08 rows=1791 width=20)
+                    Sort Key: g."eventID"
+                    ->  Nested Loop Left Join  (cost=34.23..16493.83 rows=1791 width=20)
+                          ->  Parallel Bitmap Heap Scan on gempa g  (cost=33.96..3217.31 rows=1028 width=44)
+                                Recheck Cond: (magnitude >= '6'::double precision)
+                                ->  Bitmap Index Scan on gempa_mag  (cost=0.00..33.52 rows=1747 width=0)
+                                      Index Cond: (magnitude >= '6'::double precision)
+                          ->  Index Scan using sensor_geog_gist on sensor s  (cost=0.27..12.90 rows=1 width=40)
+                                Index Cond: ((geom)::geography && _st_expand((g.geom)::geography, '50000'::double precision))
+                                Filter: st_dwithin((g.geom)::geography, (geom)::geography, '50000'::double precision, false)

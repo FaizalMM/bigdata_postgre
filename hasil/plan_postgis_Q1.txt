@@ -1,0 +1,3 @@
+Aggregate  (cost=55.36..55.37 rows=1 width=8)
+  ->  Index Only Scan using gempa_mag on gempa  (cost=0.42..50.99 rows=1747 width=0)
+        Index Cond: (magnitude >= '6'::double precision)

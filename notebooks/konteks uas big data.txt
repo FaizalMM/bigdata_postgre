@@ -1,0 +1,111 @@
+# TUGAS BIG DATA: RINCIAN
+
+## A. Dari dokumen proyek (resmi)
+- Judul: Evaluasi Performa PostgreSQL/PostGIS dan MongoDB terhadap Baseline
+  HDFS-Parquet untuk Penyimpanan dan Analisis Data Kejadian Gempa Bumi di Indonesia
+- Sumber data: Kaggle "Earthquakes in Indonesia" (kekavigi), format TSV
+- Tujuan: mengevaluasi performa dalam menyimpan dan menganalisis data gempa
+  - PostgreSQL/PostGIS : data terstruktur + kueri spasial
+  - MongoDB            : data berbasis dokumen + pencarian berdasarkan atribut gempa
+  - HDFS-Parquet       : baseline (pembanding dasar)
+
+## B. Dari deskripsi mata kuliah
+- Project-Based Learning, dikerjakan berkelompok (5 anggota)
+- Membangun pipeline analisis data end-to-end yang mengintegrasikan teknologi
+  yang dipelajari: ingestion & storage -> pemrosesan terdistribusi -> analisis
+  & visualisasi -> wawasan yang dapat ditindaklanjuti
+- Teknologi di silabus: HDFS, YARN, MapReduce, Spark (Core, SQL, Streaming,
+  MLlib), MongoDB, Cassandra (tidak semuanya wajib dipakai di proyek ini)
+
+## C. Ketentuan dari dosen
+1. Data hanya perlu dalam bentuk Parquet, "apa adanya" (tanpa cleaning)
+2. Presentasi 20 menit per kelompok = 15 menit presentasi + demo, 5 menit tanya jawab
+   a. Bagian laporan (maks 5 menit): judul + pembagian peran 5 anggota,
+      latar belakang, data yang digunakan, diagram arsitektur testbed
+      (spesifikasi hardware, teknologi storage, konfigurasi jaringan),
+      variabel eksperimen
+   b. Demo eksperimen (maks 10 menit, live atau video): instalasi dan
+      konfigurasi, jalannya eksperimen (fokus pemrosesan data), hasil,
+      temuan/kesimpulan
+3. Laporan tertulis, dikumpulkan SETELAH presentasi:
+   Cover | Deskripsi Project (pendahuluan; teknologi dan data; rancangan dan
+   topologi; proses pengujian dan variabel) | Tahapan Implementasi (instalasi
+   dan konfigurasi) | Hasil Eksperimen dan Analisis Data | Kesimpulan
+4. Baseline HDFS-Parquet dijalankan lokal (kamu bilang "lokal aja, aman";
+   sebaiknya tetap tulis di laporan sebagai keterbatasan)
+
+## D. Keputusan kita sendiri (BUKAN perintah dosen, boleh diubah)
+- Dataset: katalog_gempa_v2 (176.384 baris) + katalog_sensor (1.743 baris)
+- Baseline: Parquet dibaca Spark mode local (cadangan: PyArrow jika Java/Spark bermasalah)
+- PostgreSQL 16 + PostGIS dan MongoDB dipasang langsung di laptop (tanpa Docker)
+- Satu sistem aktif per sesi demi keadilan pengukuran
+- Yang diukur: waktu muat, ukuran penyimpanan, kecepatan kueri
+- Sembilan kueri Q1 sampai Q9 (filter, agregasi, spasial, join spasial, focal mechanism)
+- Pengulangan 3 kali (muat) dan 5 kali ukur + 1 pemanasan (kueri), laporkan median
+- Uji skalabilitas (data diperbesar): opsional jika waktu cukup
+
+## E. Waktu
+- Presentasi 4 hari lagi dari saat percakapan ini
+
+# SPESIFIKASI PENGUKURAN: PostGIS vs MongoDB (pemuatan data)
+
+## Sumber dan prinsip
+- Sumber SAMA: data/gempa_raw.parquet (176.384 baris x 37 kolom)
+  dan data/sensor_raw.parquet (1.743 baris x 6 kolom)
+- Data "apa adanya": tidak ada baris dibuang, tidak ada nilai diubah/diisi
+- Nama kolom dipertahankan persis seperti di Parquet
+  (AzGapFM dan azgapFM adalah dua kolom berbeda)
+- Yang diubah hanya TIPE/penyimpanan: teks waktu -> tipe waktu (UTC),
+  ditambah kolom lokasi (geom) dari longitude dan latitude
+
+## Tahap yang diukur (nama tahap HARUS sama di kedua sistem)
+A. baca parquet            : pd.read_parquet gempa + sensor (sama persis)
+B. konversi tipe waktu     : gempa: datetime, datetimeFM; sensor: datetime
+                             (format ISO8601, UTC, jumlah non-null dicek sama)
+C. siapkan bentuk kiriman  : PostGIS  = tulis CSV di memori
+                             MongoDB  = susun dokumen (geom GeoJSON [bujur, lintang],
+                                        kolom FM dikelompokkan hanya bila ada)
+D. kirim ke database       : PostGIS  = CREATE TABLE + COPY (geom dihitung server)
+                             MongoDB  = insert_many per batch (bulk)
+E. bangun indeks           : gempa : kunci eventID, lokasi (GiST / 2dsphere),
+                                     datetime, magnitude, depth
+                             sensor: lokasi (GiST / 2dsphere)
+F. perapian                : PostGIS = VACUUM FULL + ANALYZE
+                             MongoDB = tidak ada padanan; catat "tidak ada"
+                                       (atau setara compact bila dipakai)
+
+Dilaporkan: waktu per tahap, "TOTAL A-F", dan "Murni database D-F" (D+E+F).
+Tahap C sengaja dipisah: bentuk data MongoDB (dokumen) menuntut kerja lebih
+di sisi aplikasi, dan itu temuan yang sah.
+
+## Aturan agar adil
+1. Satu sistem database aktif per sesi (matikan yang lain)
+2. Laptop sama, charger dicolok, aplikasi lain ditutup
+3. Metode bulk di kedua sistem (COPY dan insert_many)
+4. Ulangi 3 putaran (--ulang 3), laporkan MEDIAN
+5. Tiap putaran: hapus data lama lalu muat ulang dari awal
+
+## Ukuran penyimpanan (diukur setelah tahap F)
+- PostGIS : pg_relation_size (tabel), pg_indexes_size (indeks),
+            pg_total_relation_size (total) untuk gempa dan sensor
+- MongoDB : dataSize / storageSize (data), totalIndexSize (indeks), total
+- Pembanding: TSV asli gempa 30.993.175 byte; gempa_raw.parquet sekitar 13 MB
+
+## Verifikasi (cek yang SAMA di kedua sistem; harus lolos semua)
+- Jumlah baris: gempa = 176384, sensor = 1743
+- depth maksimum = 90000 (tidak diubah)
+- magnitude kosong = 1405 (tidak diisi)
+- datetime minimum dan maksimum sama dengan sumber
+- Tidak ada baris/dokumen gempa tanpa lokasi (geom)
+
+## Keluaran
+- PostGIS : hasil/waktu_muat_postgis_v2.csv
+- MongoDB : hasil/waktu_muat_mongodb.csv (kolom sama: tahap, putaran_1..3, median)
+
+## Kueri benchmark (tahap berikutnya, definisi IDENTIK di semua sistem)
+Q1 magnitude >= 6 | Q2 tahun 2019 | Q3 M>=5, depth<70, 2020-2023
+Q4 jumlah & rata-rata magnitude per tahun | Q5 radius 100 km dari Surabaya
+Q6 bounding box Sulawesi | Q7 M>=5, 200 km dari Palu, 2018
+Q8 jumlah stasiun dalam 50 km dari gempa M>=6 | Q9 doubleCouple > 0,8
+Aturan ukur: 1 kali pemanasan (dibuang), lalu 5 kali ukur, laporkan median.
+Jumlah hasil tiap kueri harus sama antar sistem (cek silang kebenaran).

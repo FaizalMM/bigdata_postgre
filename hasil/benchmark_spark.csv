@@ -1,0 +1,10 @@
+kueri,deskripsi,hasil_ringkas,cocok_postgis,median_ms,min_ms,maks_ms,pakai_indeks,ukur_1_ms,ukur_2_ms,ukur_3_ms,ukur_4_ms,ukur_5_ms
+Q1,magnitude >= 6,1775 baris,True,161.942,112.684,200.723,False,166.051,161.942,200.723,130.763,112.684
+Q2,gempa tahun 2019 (UTC),13635 baris,True,205.581,181.605,222.371,False,222.371,213.239,205.581,192.007,181.605
+Q3,"M>=5, depth<70, 2020-2023",3744 baris,True,146.628,132.941,164.154,False,164.154,156.323,146.628,132.941,135.249
+Q4,jumlah & rata-rata magnitude per tahun,19 tahun; total=176384,True,257.182,217.191,279.9,False,279.9,263.511,239.196,257.182,217.191
+Q5,radius 100 km dari Surabaya,151 baris,True,106.607,93.746,122.275,False,122.275,115.045,106.607,93.746,100.269
+Q6,bounding box Sulawesi,30556 baris,True,109.287,86.849,125.368,False,109.287,125.368,122.353,86.849,100.446
+Q7,"M>=5, 200 km dari Palu, tahun 2018",17 baris,True,127.847,115.323,149.827,False,143.51,127.847,115.323,149.827,127.668
+Q8,stasiun dalam 50 km dari tiap gempa M>=6,1775 gempa; total_baris_sensor=375,True,894.877,799.949,957.531,False,929.326,957.531,894.877,853.615,799.949
+Q9,doubleCouple > 0.8 (focal mechanism),3669 baris,True,64.066,56.556,75.231,False,64.066,70.5,60.024,56.556,75.231
