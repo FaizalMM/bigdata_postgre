@@ -133,11 +133,11 @@ Semua sistem berjalan **di satu laptop yang sama**, dan hanya **satu sistem akti
 ### 4.2 Perangkat keras
 
 | Komponen       | Nilai                  |
-| -------------- | ---------------------- | --- |
+| -------------- | ---------------------- |
 | CPU            | Intel Core i5 (Gen 13) |
 | RAM            | 8 GB                   |
 | Disk           | SSD 512 GB             |
-| Sistem operasi | Windows 11             |     |
+| Sistem operasi | Windows 11             |
 
 ### 4.3 Konfigurasi jaringan
 
